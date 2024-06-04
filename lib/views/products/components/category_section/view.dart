@@ -8,7 +8,7 @@ class CategorySection extends StatefulWidget {
   const CategorySection({Key? key}) : super(key: key);
   @override
   State<CategorySection> createState() => _CategorySectionState();
-}
+}//hello
 class _CategorySectionState extends State<CategorySection> {
   final cubit = GetIt.I<CategoriesCubit>();
 
