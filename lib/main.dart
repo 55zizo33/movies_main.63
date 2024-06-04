@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:project/core/helper_methods.dart';
 import 'package:project/service_locator.dart';
 import 'package:project/views/contact_us.dart';
+import 'package:project/views/lines.dart';
+import 'package:project/views/my_app.dart';
 import 'core/logic/app_theme.dart';
 import 'core/logic/cache_helper.dart';
 //hello Ahmed2
@@ -21,7 +23,7 @@ Future<void> main() async {
     Widget build(BuildContext context) {
       return ScreenUtilInit(
         designSize: const Size(430,932 ),
-        child:ContactUsView() ,
+        child:LinesView() ,
         builder: (context, child) =>  MaterialApp(
           debugShowCheckedModeBanner: false,
           title: "Tranquility",

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
@@ -12,13 +13,12 @@ class _MyMapViewState extends State<MyMapView> {
   Set<Marker> markers={};
   String address="";
   LatLng? currentLocation;
+  final  completer = Completer<GoogleMapController>();
   @override
   void initState() {
     super.initState();
     _determinePosition();
-
   }
-
   Future<void> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -50,27 +50,34 @@ class _MyMapViewState extends State<MyMapView> {
     print(marks.first.thoroughfare);
     address=
     "${marks.first.country}-${marks.first.administrativeArea}-${marks.first.locality}";
-
-
-
-
     markers.add( Marker(
       markerId: MarkerId("location"),
       position:LatLng(location.latitude, location.longitude),
     ));
+    currentLocation=LatLng(location.latitude, location.longitude);
     setState(() {
     });
+    final mapController=await completer.future;
+    await mapController.animateCamera(CameraUpdate.newLatLng(currentLocation!));
+   ;
   }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: address.isNotEmpty?AppBar(title:Text("$address") ,):null,
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        MapsLauncher.launchCoordinates(37.4220041, -122.0862462);
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async{
+          final mapController=await completer.future;
+          await mapController.animateCamera(CameraUpdate.newLatLng(LatLng(37, 122)));
+          MapsLauncher.launchCoordinates(37.4220041,-122.0862462);
       },),
       body: SafeArea(
-        child:currentLocation==null?Center(child: CircularProgressIndicator(),):GoogleMap(
+        child:currentLocation==null?Center(child: CircularProgressIndicator(),)
+            :GoogleMap(
           markers: markers,
+          onMapCreated: (controller) {
+            completer.complete(controller);
+          },
           onTap: (location)async {
             List<Placemark> marks = await placemarkFromCoordinates(location.latitude, location.longitude);
             print("*********");
@@ -92,7 +99,7 @@ class _MyMapViewState extends State<MyMapView> {
           });
           },
           initialCameraPosition: CameraPosition(
-            target: LatLng(29.980850608038466, 31.13318751108063),
+            target: LatLng(29.97996590776044, 31.133755347034022),
             zoom: 13
           ),
         ),
